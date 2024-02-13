@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1= title
+  if part_list.length
+    ul
+      each part in part_list
+        li
+          if part.photo  
+            img(src=part.photo, alt="")
+          else
+            img(src="https://sun6-22.userapi.com/s/v1/ig2/HkIoAEAYv0_br4KOrGjEr2GR9L37okRayKKZsw9L93K87UZYMjYHOqxYmabeFLj8gMNcpfhY-bvi8CA3hoqNrE8Q.jpg?size=50x50&quality=95&crop=145,0,1097,1097&ava=1", alt="")
+      
+          a(href=part.url) #{part.title}
+          p (#{part.description})
+          p $#{part.price}
+
+  else
+    p There are no parts.

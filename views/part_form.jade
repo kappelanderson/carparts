@@ -1,0 +1,69 @@
+
+extends layout
+
+block content
+  h1= title
+  console.log(part)
+  form(method='POST' enctype="multipart/form-data" action="/catalog/part/create")
+    div.form-group
+      label(for='title') Title:
+      input#title.form-control(type='text', placeholder='Name of part' name='title' required value=(undefined===part ? '' : part.title) )
+    div.form-group
+      label(for='price') Price:
+      input#price.form-control(type='number', placeholder='Price of part' name='price' required value=(undefined===part ? '' : part.price) )
+    div.form-group
+      label(for='number_in_stock') Number in Stock:
+      input#number_in_stock.form-control(type='number', placeholder='Number in Stock' name='number_in_stock' required value=(undefined===part ? '' : part.number_in_stock) )
+    div.form-group
+      label(for='description') description:
+      textarea#description.form-control(placeholder='Description' name='description' required)= undefined===part ? '' : part.description
+    div.form-group
+      label(for='brand') Brand:
+      select#brand.form-control(name='brand' required)
+        option(value='') --Please select an Brand--
+        for brand in brands
+          if part
+            console.log(brand)
+
+            if brand && part.brand && part.brand._id && brand._id.toString() === part.brand._id.toString()
+
+              option(value=brand._id selected) #{brand.name}
+            else
+              option(value=brand._id) #{brand.name}
+          else
+            option(value=brand._id) #{brand.name}
+    div.form-group
+      label(for='category') Category (Optional):
+      select#category.form-control(name='category' )
+        option(value='') --Please select an category--
+        for category in categories
+          if part
+            if category && part.category && part.category._id && category._id.toString() === part.category._id.toString()
+              option(value=category._id selected) #{category.name}
+            else
+              option(value=category._id) #{category.name}
+          else
+            option(value=category._id) #{category.name}
+    div.form-group
+      label(for='fit') Fit:
+      select#fit.form-control(name='fit' required)
+        option(value='') --Please select an fit--
+        for fit in fits
+          if part
+            if fit && part.fit && part.fit._id && fit._id.toString() === part.fit._id.toString()
+              option(value=fit._id selected) #{fit.name}
+            else
+              option(value=fit._id) #{fit.name}
+          else
+            option(value=fit._id) #{fit.name}
+    div.form-group
+      label(for='photo') Photo:
+        input#photo.form-control(type='file', name='photo' value=(undefined===part ? '' : part.photo) )
+    div.form-group
+
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg

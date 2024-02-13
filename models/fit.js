@@ -10,7 +10,7 @@ const FitSchema = new Schema({
 
 
 FitSchema.virtual("url").get(function () {
-  return `/catalog/car/${this._id}`;
+  return `/catalog/fit/${this._id}`;
 });
 
 module.exports = mongoose.model("Fit", FitSchema);

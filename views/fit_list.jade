@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1= title
+  if fit_list.length
+    ul
+      each fit in fit_list
+        if fit.photo 
+          li
+            img(src=fit.photo, alt="" )
+            a(href=fit.url) #{fit.name}
+        else
+          li
+            img(src="https://sun1-91.userapi.com/s/v1/if1/VxnUViRRNOfnpY3i_aWtuCNy2g1BhmRCSpXfFtly3QMkYAzWWmscnHoD6Uz8hw2cc69663O6.jpg?size=50x0&quality=96&crop=478,0,1598,1598&ava=1", alt="")
+            a(href=fit.url) #{fit.name}
+
+  else
+    p There are no fits.

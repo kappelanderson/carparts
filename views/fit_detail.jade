@@ -1,0 +1,23 @@
+extends layout
+
+block content
+
+  h1 Fit: #{fit.name}
+
+  div(style='margin-left:20px;margin-top:20px')
+    if fit.photo
+      img(src=fit.photo, alt="")
+    h4 Parts
+    if fit_parts.length
+      dl
+        each part in fit_parts
+            li
+              if part.photo  
+                img(src=part.photo, alt="")
+              else
+                img(src="https://sun6-22.userapi.com/s/v1/ig2/HkIoAEAYv0_br4KOrGjEr2GR9L37okRayKKZsw9L93K87UZYMjYHOqxYmabeFLj8gMNcpfhY-bvi8CA3hoqNrE8Q.jpg?size=50x50&quality=95&crop=145,0,1097,1097&ava=1", alt="")
+              a(href=part.url) #{part.title}
+              p (#{part.description})
+              p $#{part.price}
+    else
+      p This Fit has no parts.

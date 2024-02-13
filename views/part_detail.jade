@@ -1,0 +1,32 @@
+extends layout
+
+block content
+  a(href="/catalog/parts") Back
+
+  h1 #{part.title}
+
+  div(style='margin-left:20px;margin-top:20px')
+      if part.photo  
+        img(src=part.photo, alt="")
+      else
+        img(src="https://sun6-22.userapi.com/s/v1/ig2/HkIoAEAYv0_br4KOrGjEr2GR9L37okRayKKZsw9L93K87UZYMjYHOqxYmabeFLj8gMNcpfhY-bvi8CA3hoqNrE8Q.jpg?size=50x50&quality=95&crop=145,0,1097,1097&ava=1", alt="")
+      
+
+
+      p #{part.description}
+      a(href=part.brand[0].url) 
+          p #{part.brand[0].name}
+
+      if part.category[0]
+        a(href=part.category[0].url) 
+            p #{part.category[0].name}
+      else 
+          null
+      if part.fit[0]
+        a(href=part.fit[0].url) 
+            p #{part.fit[0].name}
+
+      p Price: $#{part.price}
+      p Number in stock: #{part.number_in_stock}
+
+

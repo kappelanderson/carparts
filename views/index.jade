@@ -1,5 +1,13 @@
 extends layout
 
+
 block content
   h1= title
-  p Welcome to #{title}
+  img(src="https://avatars.mds.yandex.net/i?id=f31bf4031dba1a7f0ede87fa881a575cc2b6007d-4507542-images-thumbs&n=13", alt="")
+  p The Inventory has the following record counts:
+
+  ul
+    li #[strong Parts:] !{part_count}
+    li #[strong Brands:] !{brand_count}
+    li #[strong Fits:] !{fit_count}
+    li #[strong Categories:] !{category_count}
