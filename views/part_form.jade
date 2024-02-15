@@ -21,12 +21,12 @@ block content
       label(for='brand') Brand:
       select#brand.form-control(name='brand' required)
         option(value='') --Please select an Brand--
+        console.log(brands)
         for brand in brands
           if part
             console.log(brand)
 
-            if brand && part.brand && part.brand._id && brand._id.toString() === part.brand._id.toString()
-
+            if brand._id.toString() === part.brand[0]._id.toString()
               option(value=brand._id selected) #{brand.name}
             else
               option(value=brand._id) #{brand.name}
@@ -38,7 +38,7 @@ block content
         option(value='') --Please select an category--
         for category in categories
           if part
-            if category && part.category && part.category._id && category._id.toString() === part.category._id.toString()
+            if category._id.toString() === part.category[0]._id.toString()
               option(value=category._id selected) #{category.name}
             else
               option(value=category._id) #{category.name}
@@ -50,7 +50,7 @@ block content
         option(value='') --Please select an fit--
         for fit in fits
           if part
-            if fit && part.fit && part.fit._id && fit._id.toString() === part.fit._id.toString()
+            if fit._id.toString() === part.fit[0]._id.toString()
               option(value=fit._id selected) #{fit.name}
             else
               option(value=fit._id) #{fit.name}

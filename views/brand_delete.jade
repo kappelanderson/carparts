@@ -1,0 +1,26 @@
+extends layout
+
+block content
+
+  h1 #{title}: #{brand.name}
+  p= brand.lifespan
+
+  if brand_parts.length > 0
+
+    p #[strong Delete the following parts before attempting to delete this brand.]
+    div(style='margin-left:20px;margin-top:20px')
+      h4 Parts
+      dl
+        each part in brand_parts
+          dt
+            a(href=part.url) #{part.title}
+          dd #{part.summary}
+
+  else
+    p Do you really want to delete this brand?
+
+    form(method='POST')
+      div.form-group
+        input#brandid.form-control(type='hidden', name='brandid', value=brand._id )
+
+      button.btn.btn-primary(type='submit') Delete

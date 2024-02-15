@@ -5,7 +5,7 @@ block content
 
   h1 #{title}
 
-  form(method='POST' action="/catalog/fit/create" enctype="multipart/form-data")
+  form(method='POST'  enctype="multipart/form-data")
     div.form-group
       label(for='name') Fit:
       input#name.form-control(type='text', name='name' required value=(undefined===fit ? '' : fit.name) )

@@ -6,6 +6,7 @@ const { body, validationResult } = require("express-validator");
 
 
 const asyncHandler = require("express-async-handler");
+const part = require("../models/part");
 
 exports.index = asyncHandler(async (req, res, next) => {
     // Get details of books, book instances, authors and part counts (in parallel)
@@ -155,20 +156,162 @@ exports.part_create_post = [
 ];
 // Display part delete form on GET.
 exports.part_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: part delete GET");
-});
+  // Get details of brand and all their books (in parallel)
+  const part = await Part.findById(req.params.id).exec()
+
+  if (part === null) {
+    // No results.
+    res.redirect("/catalog/parts");
+  }
+
+  res.render("part_delete", {
+    title: "Delete Part",
+    part: part,
+  });});
 
 // Handle part delete on POST.
 exports.part_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: part delete POST");
-});
+  // Get details of category and all their books (in parallel)
+  const part = await Part.findById(req.params.id).exec()
+  
+
+
+    // category has no books. Delete object and redirect to the list of categorys.
+    await Part.findByIdAndDelete(req.body.partid);
+    res.redirect("/catalog/parts");
+  });
 
 // Display part update form on GET.
 exports.part_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: part update GET");
-});
+
+  const [allFits, allCategories, allBrands, part] = await Promise.all([
+    Fit.find().sort({ name: 1 }).exec(),
+    Category.find().sort({ name: 1 }).exec(),
+    Brand.find().sort({ name: 1 }).exec(),
+    Part.findOne({_id: req.params.id}).exec()
+  ]);
+
+
+  res.render("part_form", {
+    title: "Update Part",
+    part: part,        
+    fits: allFits,
+    categories: allCategories,
+    brands: allBrands,
+  });});
 
 // Handle part update on POST.
-exports.part_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: part update POST");
-});
+exports.part_update_post = [
+  // Convert the genre to an array.
+  (req, res, next) => {
+    if (!Array.isArray(req.body.category)) {
+      req.body.category =
+        typeof req.body.category === "undefined" ? [] : [req.body.category];
+    }
+    next();
+  },
+
+  // Validate and sanitize fields.
+  body("title", "Title must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("description", "Description must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("price", "Price must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  // Process request after validation and sanitization.
+
+  asyncHandler(async (req, res, next) => {
+
+    const part = await Part.findOne({ _id: req.params.id  }).exec();
+
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    let photourl = part.photo
+    if(req.file){
+      photourl = req.file.path.substring(6) || null
+    }
+    
+      part.title = req.body.title
+      part.description = req.body.description
+      part.photo = photourl
+      part.price = req.body.price
+      part.number_in_stock = req.body.number_in_stock
+      part.fit = req.body.fit
+      part.category = req.body.category || null
+      part.brand = req.body.brand
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/error messages.
+      console.log("Part " + part)
+      // Get all authors and genres for form.
+      const [allFits, allCategories, allBrands] = await Promise.all([
+        Fit.find().sort({ name: 1 }).exec(),
+        Category.find().sort({ name: 1 }).exec(),
+        Brand.find().sort({ name: 1 }).exec(),
+
+      ]);
+
+
+      res.render("part_form", {
+        title: part.title,
+        part: part,        
+        fits: allFits,
+        categories: allCategories,
+        brands: allBrands,
+        errors: errors.array(),
+      });
+    } else {
+      // Data from form is valid. Save book.
+      await part.save();
+      res.redirect(part.url);
+    }
+  }),
+];
+
+[
+  // Validate and sanitize the name field.
+  body("name", "part name must contain at least 3 characters")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    const part = await Part.findOne({ _id: req.params.id  }).exec();
+
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+    if(req.file){
+      part.photo = req.file.path.substring(6)
+    }
+    part.name = req.body.name
+
+    // Create a part object with escaped and trimmed data.
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render the form again with sanitized values/error messages.
+      res.render("fit_form", {
+        title: "Update fit",
+        part: part,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data from form is valid.
+      // Check if fit with same name already exists.
+
+        // New fit saved. Redirect to fit detail page.
+
+        await part.save()
+        res.redirect(part.url);
+      
+    }
+  }),
+];

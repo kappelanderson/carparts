@@ -1,0 +1,15 @@
+extends layout
+
+block content
+
+  h1 #{title}: #{part.title}
+  p= part.lifespan
+
+
+    p Do you really want to delete this part?
+
+    form(method='POST')
+      div.form-group
+        input#partid.form-control(type='hidden', name='partid', value=part._id )
+
+      button.btn.btn-primary(type='submit') Delete

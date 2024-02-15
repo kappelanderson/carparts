@@ -4,7 +4,10 @@ block content
   a(href="/catalog/parts") Back
 
   h1 #{part.title}
-
+  p 
+    a(href=part._id + '/update') Update
+  p 
+    a(href=part._id + '/delete') Delete
   div(style='margin-left:20px;margin-top:20px')
       if part.photo  
         img(src=part.photo, alt="")

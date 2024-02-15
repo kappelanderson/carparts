@@ -126,7 +126,7 @@ router.get(
 
 // POST request to update fit.
 router.post(
-  "/fit/:id/update",
+  "/fit/:id/update", fitsuploads.single('photo'), 
   fit_controller.fit_update_post,
 );
 

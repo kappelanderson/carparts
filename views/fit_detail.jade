@@ -3,7 +3,10 @@ extends layout
 block content
 
   h1 Fit: #{fit.name}
-
+  p 
+    a(href=fit._id + '/update') Update
+  p 
+    a(href=fit._id + '/delete') Delete
   div(style='margin-left:20px;margin-top:20px')
     if fit.photo
       img(src=fit.photo, alt="")

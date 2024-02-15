@@ -1,0 +1,26 @@
+extends layout
+
+block content
+
+  h1 #{title}: #{fit.name}
+  p= fit.lifespan
+
+  if fit_parts.length > 0
+
+    p #[strong Delete the following parts before attempting to delete this fit.]
+    div(style='margin-left:20px;margin-top:20px')
+      h4 Parts
+      dl
+        each part in fit_parts
+          dt
+            a(href=part.url) #{part.title}
+          dd #{part.summary}
+
+  else
+    p Do you really want to delete this fit?
+
+    form(method='POST')
+      div.form-group
+        input#fitid.form-control(type='hidden', name='fitid', value=fit._id )
+
+      button.btn.btn-primary(type='submit') Delete

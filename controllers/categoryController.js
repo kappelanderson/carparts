@@ -51,7 +51,7 @@ asyncHandler(async (req, res, next) => {
 // Extract the validation errors from a request.
 const errors = validationResult(req);
 
-// Create a brand object with escaped and trimmed data.
+// Create a category object with escaped and trimmed data.
 const category = new Category({ name: req.body.name });
 
 if (!errors.isEmpty()) {
@@ -80,20 +80,77 @@ if (!errors.isEmpty()) {
 
 // Display category delete form on GET.
 exports.category_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: category delete GET");
-});
+  // Get details of category and all their books (in parallel)
+  const [category, allpartsByCategories] = await Promise.all([
+    Category.findById(req.params.id).exec(),
+    Part.find({ category: req.params.id }, "title summary").exec(),
+  ]);
+
+  if (allpartsByCategories === null) {
+    // No results.
+    res.redirect("/catalog/categorys");
+  }
+
+  res.render("category_delete", {
+    title: "Delete category",
+    category: category,
+    category_parts: allpartsByCategories,
+  });});
 
 // Handle category delete on POST.
 exports.category_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: category delete POST");
+  // Get details of category and all their books (in parallel)
+  const [category, allPartsByCategories] = await Promise.all([
+    Category.findById(req.params.id).exec(),
+    Part.find({ category: req.params.id }, "title summary").exec(),
+  ]);
+
+  if (allPartsByCategories.length > 0) {
+    // category has books. Render in same way as for GET route.
+    res.render("category_delete", {
+      title: "Delete category",
+      category: category,
+      category_parts: allPartsByCategories,
+    });
+    return;
+  } else {
+    // category has no books. Delete object and redirect to the list of categorys.
+    await Category.findByIdAndDelete(req.body.categoryid);
+    res.redirect("/catalog/categories");
+  }
 });
 
 // Display category update form on GET.
 exports.category_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: category update GET");
+  const category = await Category.findOne({ _id: req.params.id  }).exec();
+  res.render("category_form", {
+    title: "Update Category",
+    category: category,
+  });
 });
 
-// Handle category update on POST.
-exports.category_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: category update POST");
-});
+exports.category_update_post = [  body("name", "Part name must contain at least 3 characters")
+.trim()
+.isLength({ min: 3 })
+.escape(),
+
+asyncHandler(async (req, res, next) => {
+const errors = validationResult(req);
+
+const category = new Category({ name: req.body.name });
+
+if (!errors.isEmpty()) {
+   res.render("category", {
+    title: "Update category",
+    category: category,
+    errors: errors.array(),
+  });
+  return;
+} else {
+  const categoryUpdated = await Category.findOneAndUpdate({ _id: req.params.id }, { $set: { name: req.body.name } })
+  .exec();
+  res.redirect(categoryUpdated.url);
+
+}
+}),
+]
